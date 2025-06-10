@@ -77,7 +77,7 @@ class LlamaCpp {
         ctx_size=2048,
         batch_size=512,
         temp=0.8,
-        n_gpu_layers=0,
+        n_gpu_layers = navigator?.gpu?.wgslLanguageFeatures?.size ?? 0, // Use GPU if available, otherwise CPU
         top_k=40,
         top_p=0.9,
         no_display_prompt=true,
