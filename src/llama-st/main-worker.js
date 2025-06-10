@@ -4,6 +4,7 @@ import Module from "./main.js";
 
 // WASM Module
 let module;
+let modelLoaded = false;
 
 // hard-coded filepath for loaded model in vfs
 const model_path = "/models/model.bin";
@@ -41,6 +42,11 @@ const stdout = (c) => {
 const stderr = () => {};
 
 const initWorker = async (modelPath) => {
+    if (module && modelLoaded) {
+        postMessage({ event: action.INITIALIZED });
+        return;
+    }
+
     const emscrModule = {
         noInitialRun: true,
         preInit: [() => {
@@ -68,7 +74,9 @@ const initWorker = async (modelPath) => {
 
         // load model
         module['FS_createDataFile']('/models', 'model.bin', bytes, true, true, true);
-        
+
+        modelLoaded = true;
+
         // update callback action to worker main thread
         postMessage({
             event: action.INITIALIZED
