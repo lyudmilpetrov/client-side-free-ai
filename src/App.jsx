@@ -29,7 +29,7 @@ const MODELS = [
 ];
 
 const DEFAULT_PROMPT =
-  'Suppose Alice originally had 3 apples, then Bob gave Alice 7 apples, then Alice gave Cook 5 apples, and then Tim gave Alice 3x the amount of apples Alice had. How many apples does Alice have now? Let\u2019s think step by step.';
+  'Describe some of the business applications of Generative AI.';
 
 export default function App() {
   const [modelUrl, setModelUrl] = useState(MODELS[0].url);
