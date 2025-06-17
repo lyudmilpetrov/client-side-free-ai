@@ -20,11 +20,15 @@
 
 ## Configure the Pages settings on GitHub
 
-In your repository’s “Settings” → “Pages,” select the gh-pages branch.
+    In your repository’s “Settings” → “Pages,” select the gh-pages branch.
 
-Choose / (root) as the folder. Save the configuration.
+    Choose / (root) as the folder. Save the configuration.
 
-Visit the generated URL
-GitHub will build and serve your static site. After a minute or two, the Pages section in Settings will show your site’s URL (usually https://<username>.github.io/<repository>). Open that address in a browser to confirm the site loads.
+    Visit the generated URL
+    GitHub will build and serve your static site. After a minute or two, the Pages section in Settings will show your site’s URL (usually https://<username>.github.io/<repository>). Open that address in a browser to confirm the site loads.
 
-These steps publish your built React/Vite application as a static page using GitHub Pages. If your repository has a custom domain defined in docs/CNAME, you can move that file into the branch as well.
+    These steps publish your built React/Vite application as a static page using GitHub Pages. If your repository has a custom domain defined in docs/CNAME, you can move that file into the branch as well.
+
+    To update the main branch on your remote with the contents of your local gh-pages branch, you can push directly:
+
+git push origin gh-pages:main
