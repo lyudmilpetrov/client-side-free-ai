@@ -100,6 +100,8 @@ git pull origin gh-pages
 
 # Copy the folder from the source branch
 git checkout main -- dist
+# Copy the contents from the source branch (ignoring the folder itself)
+git checkout main -- dist/*
 
 # Add and commit the changes
 git add dist
