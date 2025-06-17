@@ -40,3 +40,38 @@ git checkout main
 git merge gh-pages
 git merge gh-pages --allow-unrelated-histories
 git push origin main
+
+
+
+Answer:
+
+After you commit code on main, build the project and update the gh‑pages branch with the generated files. The repository’s Notes/git.md describes the publish workflow:
+
+git checkout --orphan gh-pages
+git reset --hard
+cp -r dist/* .
+git add .
+git commit -m "Publish to GitHub Pages"
+git push origin gh-pages
+
+To keep gh-pages current:
+
+On main, run npm run build.
+(The build artifacts go into dist/.)
+
+Checkout the gh-pages branch:
+
+git checkout gh-pages
+Replace its contents with the freshly built files:
+
+git rm -r .
+cp -r ../dist/* .
+Commit and push:
+
+git add .
+git commit -m "Update GitHub Pages"
+git push origin gh-pages
+Switch back to main for further development:
+
+git checkout main
+Once pushed, GitHub Pages will serve the updated site from the gh-pages branch.
