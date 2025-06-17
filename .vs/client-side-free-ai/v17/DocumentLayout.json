@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ljudm\\Documents\\Work\\LLM_Engineering\\client-side-free-ai\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5FBD9D7F-469D-BDD6-0CA0-DCFA4CBE7C36}|client-side-free-ai.esproj|c:\\users\\ljudm\\documents\\work\\llm_engineering\\client-side-free-ai\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{5FBD9D7F-469D-BDD6-0CA0-DCFA4CBE7C36}|client-side-free-ai.esproj|solutionrelative:readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\ljudm\\Documents\\Work\\LLM_Engineering\\client-side-free-ai\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Users\\ljudm\\Documents\\Work\\LLM_Engineering\\client-side-free-ai\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwvxMAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-06-09T02:32:40.459Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
