@@ -88,3 +88,22 @@ export default defineConfig({
 ```
 
 Rebuild after changing this setting so asset URLs include the repository subpath.
+
+
+
+
+# Switch to the target branch
+git checkout gh-pages --force
+
+# Ensure the latest changes are pulled (optional)
+git pull origin gh-pages
+
+# Copy the folder from the source branch
+git checkout main -- path/to/folder
+
+# Add and commit the changes
+git add path/to/folder
+git commit -m "Copied folder from main to gh-pages"
+
+# Push the changes (if needed)
+git push origin gh-pages
