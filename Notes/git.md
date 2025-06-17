@@ -75,3 +75,16 @@ Switch back to main for further development:
 
 git checkout main
 Once pushed, GitHub Pages will serve the updated site from the gh-pages branch.
+
+### Configure Vite base path
+
+When deploying to GitHub Pages under a repository name (e.g. `https://<user>.github.io/client-side-free-ai/`), set the `base` option in `vite.config.js`:
+
+```js
+export default defineConfig({
+  plugins: [plugin()],
+  base: '/client-side-free-ai/',
+});
+```
+
+Rebuild after changing this setting so asset URLs include the repository subpath.
