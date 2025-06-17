@@ -60,3 +60,9 @@ curl -L https://huggingface.co/Qwen/Qwen3-0.6B-Base/resolve/main/vocab.json -o p
 
 
 1. Install WebLLM
+## Deploying to GitHub Pages
+1. Run `npm run build` to create the `dist` directory.
+2. Copy the contents of `dist` to your `gh-pages` branch.
+3. Push `gh-pages` and enable Pages in the repository settings.
+
+The Vite config sets `base: "/client-side-free-ai/"` so asset URLs resolve correctly.
