@@ -31,4 +31,13 @@
 
     To update the main branch on your remote with the contents of your local gh-pages branch, you can push directly:
 
+
+To update the main branch on your remote with the contents of your local gh-pages branch, you can push directly:
+
 git push origin gh-pages:main
+This sends your local gh-pages branch to the remote branch named main. If you want the histories merged locally before pushing, you would instead:
+
+git checkout main
+git merge gh-pages
+git merge gh-pages --allow-unrelated-histories
+git push origin main
