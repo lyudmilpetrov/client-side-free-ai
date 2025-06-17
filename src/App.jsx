@@ -83,54 +83,62 @@ export default function App() {
   };
 
   return (
-    <main className="container" style={{ padding: "2rem" }}>
-      <section>
-        <h2>Demo</h2>
+    <main className="max-w-screen-md p-4 mx-auto space-y-6">
+      <h2 className="text-xl font-semibold">Demo</h2>
 
-        <label>Model:</label>
-        <select
-          value={modelUrl}
-          onChange={(e) => setModelUrl(e.target.value)}
-          aria-label="Select model"
-          required
-        >
-          {MODELS.map((m) => (
-            <option key={m.url} value={m.url}>
-              {m.label}
-            </option>
-          ))}
-        </select>
+      <form onSubmit={handleRun} className="space-y-4">
+        <div>
+          <label className="block mb-1 font-medium">Model</label>
+          <select
+            value={modelUrl}
+            onChange={(e) => setModelUrl(e.target.value)}
+            aria-label="Select model"
+            required
+            className="w-full p-2 border rounded"
+          >
+            {MODELS.map((m) => (
+              <option key={m.url} value={m.url}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <label>Prompt:</label>
-        <textarea
-          rows={5}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
+        <div>
+          <label className="block mb-1 font-medium">Prompt</label>
+          <textarea
+            rows={5}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
 
-        <label>Result:</label>
-        <pre>{result}</pre>
-      </section>
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            onClick={handleRun}
+            hidden={status !== "idle"}
+            className="px-4 py-2 text-white bg-blue-600 rounded"
+          >
+            Run
+          </button>
+          {status !== "idle" && <progress className="flex-1" />}
+        </div>
+      </form>
 
-      <section>
-        <button onClick={handleRun} hidden={status !== "idle"}>
-          Run
-        </button>
-      </section>
+      <div>
+        <label className="block mb-1 font-medium">Result</label>
+        <pre className="p-2 overflow-x-auto text-gray-800 bg-gray-100 rounded whitespace-pre-wrap">
+          {result}
+        </pre>
+      </div>
 
-      <section>
-        <button aria-busy="true" hidden={status !== "loading"}>
-          Loading model...
-        </button>
-        <button aria-busy="true" hidden={status !== "loaded"}>
-          Loaded model
-        </button>
-        <button aria-busy="true" hidden={status !== "generating"}>
-          Generating...
-        </button>
-      </section>
-
-      <section>{status !== "idle" && <progress />}</section>
+      <div className="text-sm text-gray-600 space-x-2">
+        <span hidden={status !== "loading"}>Loading model...</span>
+        <span hidden={status !== "loaded"}>Loaded model</span>
+        <span hidden={status !== "generating"}>Generating...</span>
+      </div>
     </main>
   );
 }
