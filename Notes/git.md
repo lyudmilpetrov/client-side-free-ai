@@ -99,10 +99,10 @@ git checkout gh-pages --force
 git pull origin gh-pages
 
 # Copy the folder from the source branch
-git checkout main -- path/to/folder
+git checkout main -- dist
 
 # Add and commit the changes
-git add path/to/folder
+git add dist
 git commit -m "Copied folder from main to gh-pages"
 
 # Push the changes (if needed)
