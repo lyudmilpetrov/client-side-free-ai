@@ -17,7 +17,8 @@
     git add .
     git commit -m "Publish to GitHub Pages"
     git push origin gh-pages
-    Configure the Pages settings on GitHub
+
+## Configure the Pages settings on GitHub
 
 In your repository’s “Settings” → “Pages,” select the gh-pages branch.
 
