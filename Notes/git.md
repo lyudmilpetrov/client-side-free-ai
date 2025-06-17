@@ -8,20 +8,16 @@
     Push the build artifacts to a “gh-pages” branch
 
 ## Create a branch named gh-pages (if it doesn’t exist).
-    # create a new orphan branch locally
+
+    Commit and push the branch:
+
     git checkout --orphan gh-pages
-    git push -u origin gh-pages   # this command creates the branch on GitHub
-## Copy the contents of the dist folder to the root of that branch.
-
-Commit and push the branch:
-
-git checkout --orphan gh-pages
-git reset --hard
-cp -r dist/* .
-git add .
-git commit -m "Publish to GitHub Pages"
-git push origin gh-pages
-Configure the Pages settings on GitHub
+    git reset --hard
+    cp -r dist/* .
+    git add .
+    git commit -m "Publish to GitHub Pages"
+    git push origin gh-pages
+    Configure the Pages settings on GitHub
 
 In your repository’s “Settings” → “Pages,” select the gh-pages branch.
 
