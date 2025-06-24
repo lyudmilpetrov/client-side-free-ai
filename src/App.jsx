@@ -29,6 +29,11 @@ const MODELS = [
   },
   {
     url:
+      "https://huggingface.co/Menlo/Jan-nano-gguf/resolve/main/jan-nano-4b-Q3_K_S.gguf",
+    label: "Jan nano	qwen3 (1.08 GB)",
+  },
+  {
+    url:
       "https://huggingface.co/TheBloke/phi-2-GGUF/resolve/main/phi-2.Q3_K_M.gguf",
     label: "microsoft/phi-2 Q3_K_M (1.48 GB)",
   },
