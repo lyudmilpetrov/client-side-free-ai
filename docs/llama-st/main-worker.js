@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { action } from "./actions.js";
 import { loadBinaryResource } from "./utility.js";
 import Module from "./main.js";
@@ -103,6 +104,7 @@ const run_main = (
         "--prompt", prompt.toString(),
     ];
 
+    // eslint-disable-next-line no-extra-boolean-cast
     if (!!globalThis.SharedArrayBuffer) {
         args.push("--threads");
         args.push((navigator.hardwareConcurrency).toString());
