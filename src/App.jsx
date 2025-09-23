@@ -57,7 +57,52 @@ export default function App() {
   const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
   const [result, setResult] = useState("");
   const [status, setStatus] = useState("idle");
+  const [loadedModelUrl, setLoadedModelUrl] = useState(null);
   const llamaRef = useRef(null);
+
+  const isSelectedModelLoaded = loadedModelUrl === modelUrl;
+
+  const handleModelChange = (event) => {
+    const nextModelUrl = event.target.value;
+    setModelUrl(nextModelUrl);
+
+    if (llamaRef.current && llamaRef.current.url === nextModelUrl) {
+      setLoadedModelUrl(nextModelUrl);
+    } else {
+      setLoadedModelUrl(null);
+    }
+  };
+
+  const indicator = (() => {
+    if (status === "loading") {
+      return {
+        label: "Loading selected model...",
+        styles:
+          "bg-blue-100 text-blue-800 border border-blue-200",
+      };
+    }
+
+    if (status === "generating") {
+      return {
+        label: "Generating with loaded model",
+        styles:
+          "bg-purple-100 text-purple-800 border border-purple-200",
+      };
+    }
+
+    if (isSelectedModelLoaded) {
+      return {
+        label: "Model ready in memory",
+        styles:
+          "bg-green-100 text-green-800 border border-green-200",
+      };
+    }
+
+    return {
+      label: "Model not loaded",
+      styles: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+    };
+  })();
 
   const runModel = () => {
     const run = () => {
@@ -71,10 +116,12 @@ export default function App() {
     };
 
     if (!llamaRef.current || llamaRef.current.url !== modelUrl) {
+      setLoadedModelUrl(null);
       llamaRef.current = new LlamaCpp(
         modelUrl,
         () => {
           setStatus("loaded");
+          setLoadedModelUrl(modelUrl);
           run();
         },
         (text) => {
@@ -85,6 +132,7 @@ export default function App() {
       );
     } else {
       setStatus("loaded");
+      setLoadedModelUrl(modelUrl);
       run();
     }
   };
@@ -98,7 +146,13 @@ export default function App() {
   };
 
   return (
-    <main className="max-w-screen-md p-4 mx-auto space-y-6">
+    <main className="relative max-w-screen-md p-4 mx-auto space-y-6">
+      <div
+        className={`absolute top-4 right-4 px-3 py-1 text-sm font-medium rounded-full shadow-sm ${indicator.styles}`}
+        aria-live="polite"
+      >
+        {indicator.label}
+      </div>
       <h2 className="text-xl font-semibold">Demo</h2>
 
       <form onSubmit={handleRun} className="space-y-4">
@@ -106,7 +160,7 @@ export default function App() {
           <label className="block mb-1 font-medium">Model</label>
           <select
             value={modelUrl}
-            onChange={(e) => setModelUrl(e.target.value)}
+            onChange={handleModelChange}
             aria-label="Select model"
             required
             className="w-full p-2 border rounded"
