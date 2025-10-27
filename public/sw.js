@@ -15,6 +15,11 @@ const MODEL_URL_PATTERNS = [
 ];
 const OPTIONAL_MODEL_ASSETS = ["tokenizer.model"];
 const CHUNK_SIZE = 1 << 20; // 1 MiB
+const MIME_GUESS_MAP = [
+  { test: /\.wasm$/i, type: "application/wasm" },
+  { test: /\.json$/i, type: "application/json" },
+  { test: /\.gguf$/i, type: "application/octet-stream" },
+];
 const DB_NAME = "pwa-model-cache";
 const DATA_STORE = "shards";
 const META_STORE = "metadata";
@@ -146,6 +151,7 @@ async function downloadWithResume(request, canonical, existingBuffer, existingTo
   let start = collected.byteLength;
   const headers = new Headers(request.headers);
   headers.delete("range");
+  headers.set("accept-encoding", "identity");
   while (total == null || start < total) {
     const end = start + CHUNK_SIZE - 1;
     const chunkHeaders = new Headers(headers);
@@ -201,7 +207,15 @@ async function downloadWithResume(request, canonical, existingBuffer, existingTo
   const hash = await digest(buffer);
   await caches
     .open(MODEL_CACHE)
-    .then((cache) => cache.put(canonical, new Response(buffer.slice(0), createResponseHeaders(total ?? collected.byteLength, hash))));
+    .then((cache) =>
+      cache.put(
+        canonical,
+        new Response(buffer.slice(0), {
+          headers: createResponseHeaders(total ?? collected.byteLength, hash, canonical),
+          status: 200,
+        })
+      )
+    );
   return { buffer, total: total ?? collected.byteLength, hash };
 }
 
@@ -214,7 +228,7 @@ function parseContentRange(rangeHeader) {
 
 function createResponse(buffer, metadata, rangeHeader, request) {
   const total = metadata.total ?? buffer.byteLength;
-  const headers = createResponseHeaders(total, metadata.hash);
+  const headers = createResponseHeaders(total, metadata.hash, request.url);
   if (!rangeHeader) {
     return new Response(buffer.slice(0), { status: 200, headers });
   }
@@ -240,9 +254,9 @@ function createResponse(buffer, metadata, rangeHeader, request) {
   return new Response(sliced, { status: 206, headers: rangeHeaders });
 }
 
-function createResponseHeaders(total, hash) {
+function createResponseHeaders(total, hash, url) {
   const headers = new Headers({
-    "Content-Type": "application/octet-stream",
+    "Content-Type": inferContentType(url),
     "Content-Length": String(total),
     "Accept-Ranges": "bytes",
   });
@@ -250,6 +264,18 @@ function createResponseHeaders(total, hash) {
     headers.set("X-Content-Integrity", hash);
   }
   return headers;
+}
+
+function inferContentType(url) {
+  if (!url) {
+    return "application/octet-stream";
+  }
+  for (const entry of MIME_GUESS_MAP) {
+    if (entry.test.test(url)) {
+      return entry.type;
+    }
+  }
+  return "application/octet-stream";
 }
 
 async function prefetchModelAssets(payload) {
