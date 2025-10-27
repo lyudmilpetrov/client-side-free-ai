@@ -1,0 +1,17 @@
+{
+  "name": "Client-side Free AI",
+  "short_name": "FreeAI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "description": "Progressive web app for running client-side language models with offline caching.",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

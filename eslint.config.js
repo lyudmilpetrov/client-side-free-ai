@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'assets', 'docs', 'public', 'src/llama-mt/**', 'src/llama-st/**'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
