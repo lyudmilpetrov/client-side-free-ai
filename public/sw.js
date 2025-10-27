@@ -13,6 +13,7 @@ const MODEL_URL_PATTERNS = [
   "https://cdn.jsdelivr.net/",
   "https://models.xenova.ai/",
 ];
+const OPTIONAL_MODEL_ASSETS = ["tokenizer.model"];
 const CHUNK_SIZE = 1 << 20; // 1 MiB
 const DB_NAME = "pwa-model-cache";
 const DATA_STORE = "shards";
@@ -261,9 +262,9 @@ async function prefetchModelAssets(payload) {
     if (base) {
       urls.add(new URL("mlc-chat-config.json", base).href);
       urls.add(new URL("tokenizer.json", base).href);
-      urls.add(new URL("tokenizer.model", base).href);
       urls.add(new URL("tokenizer_config.json", base).href);
       urls.add(new URL("ndarray-cache.json", base).href);
+      await enqueueOptionalModelAssets(base, urls);
     }
     try {
       if (!base) {
@@ -295,6 +296,38 @@ async function prefetchModelAssets(payload) {
       console.error("[sw] Prefetch error for", url, error);
     }
   }));
+}
+
+async function enqueueOptionalModelAssets(base, urls) {
+  await Promise.all(
+    OPTIONAL_MODEL_ASSETS.map(async (asset) => {
+      const assetUrl = new URL(asset, base).href;
+      if (await assetExists(assetUrl)) {
+        urls.add(assetUrl);
+      }
+    })
+  );
+}
+
+async function assetExists(url) {
+  try {
+    const headRequest = new Request(url, { method: "HEAD", cache: "no-store" });
+    const headResponse = await fetch(headRequest);
+    if (headResponse.ok) {
+      return true;
+    }
+    if (headResponse.status === 404) {
+      return false;
+    }
+    if (headResponse.status === 405) {
+      const getRequest = new Request(url, { method: "GET", cache: "no-store" });
+      const getResponse = await fetch(getRequest);
+      return getResponse.ok;
+    }
+  } catch (error) {
+    console.warn("[sw] Optional asset probe failed", url, error);
+  }
+  return false;
 }
 
 function normalizeModelBaseUrl(baseUrl) {
