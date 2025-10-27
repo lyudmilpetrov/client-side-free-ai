@@ -1,13 +1,96 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e2e8f0;
-  color: #0b1120;
+
+  --color-body-gradient-start: #e2e8f0;
+  --color-body-gradient-end: #f8fafc;
+  --color-text-primary: #0b1120;
+  --color-text-secondary: #334155;
+  --color-heading: #0f172a;
+  --color-muted: #475569;
+  --color-surface: #ffffffcc;
+  --color-panel-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+  --color-border-subtle: #cbd5f5;
+  --color-input-bg: #f8fafc;
+  --color-input-border: #cbd5f5;
+  --color-input-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04);
+  --color-progress-track: #e2e8f0;
+  --color-readout: #475569;
+  --color-pill-bg: rgba(148, 163, 184, 0.2);
+  --color-pill-text: #0f172a;
+  --color-pill-border: rgba(148, 163, 184, 0.4);
+  --color-toggle-track: rgba(148, 163, 184, 0.35);
+  --color-toggle-thumb: #ffffff;
+  --color-toggle-thumb-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+  --color-toggle-icon: #64748b;
+  --color-toggle-icon-active: #0f172a;
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+  --color-btn-primary-hover-shadow: 0 16px 35px rgba(37, 99, 235, 0.45);
+  --color-btn-ghost-text: #2563eb;
+  --color-btn-ghost-border: rgba(37, 99, 235, 0.35);
+  --color-btn-danger-text: #dc2626;
+  --color-btn-danger-border: rgba(220, 38, 38, 0.35);
+  --color-chip-idle-bg: #e2e8f0;
+  --color-chip-idle-text: #0f172a;
+  --color-chip-idle-border: #cbd5f5;
+  --color-chip-loading-bg: #e0f2fe;
+  --color-chip-loading-text: #0b4a6f;
+  --color-chip-loading-border: #7dd3fc;
+  --color-chip-ready-bg: #dcfce7;
+  --color-chip-ready-text: #166534;
+  --color-chip-ready-border: #86efac;
+  --color-chip-error-bg: #fee2e2;
+  --color-chip-error-text: #991b1b;
+  --color-chip-error-border: #fecaca;
+}
+
+:root[data-theme="dark"] {
+  --color-body-gradient-start: #0b1120;
+  --color-body-gradient-end: #111827;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #cbd5f5;
+  --color-heading: #f8fafc;
+  --color-muted: #94a3b8;
+  --color-surface: rgba(15, 23, 42, 0.92);
+  --color-panel-shadow: 0 24px 60px rgba(2, 6, 23, 0.65);
+  --color-border-subtle: rgba(148, 163, 184, 0.35);
+  --color-input-bg: rgba(15, 23, 42, 0.75);
+  --color-input-border: rgba(148, 163, 184, 0.5);
+  --color-input-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.25);
+  --color-progress-track: rgba(148, 163, 184, 0.35);
+  --color-readout: #cbd5f5;
+  --color-pill-bg: rgba(51, 65, 85, 0.55);
+  --color-pill-text: #e2e8f0;
+  --color-pill-border: rgba(148, 163, 184, 0.45);
+  --color-toggle-track: rgba(148, 163, 184, 0.4);
+  --color-toggle-thumb: #0f172a;
+  --color-toggle-thumb-shadow: 0 2px 8px rgba(2, 6, 23, 0.55);
+  --color-toggle-icon: #94a3b8;
+  --color-toggle-icon-active: #f8fafc;
+  --color-btn-primary-shadow: 0 12px 25px rgba(96, 165, 250, 0.25);
+  --color-btn-primary-hover-shadow: 0 16px 35px rgba(96, 165, 250, 0.35);
+  --color-btn-ghost-text: #93c5fd;
+  --color-btn-ghost-border: rgba(96, 165, 250, 0.45);
+  --color-btn-danger-text: #fca5a5;
+  --color-btn-danger-border: rgba(248, 113, 113, 0.5);
+  --color-chip-idle-bg: rgba(148, 163, 184, 0.2);
+  --color-chip-idle-text: #e2e8f0;
+  --color-chip-idle-border: rgba(148, 163, 184, 0.35);
+  --color-chip-loading-bg: rgba(14, 165, 233, 0.2);
+  --color-chip-loading-text: #38bdf8;
+  --color-chip-loading-border: rgba(14, 165, 233, 0.45);
+  --color-chip-ready-bg: rgba(74, 222, 128, 0.2);
+  --color-chip-ready-text: #4ade80;
+  --color-chip-ready-border: rgba(74, 222, 128, 0.45);
+  --color-chip-error-bg: rgba(248, 113, 113, 0.25);
+  --color-chip-error-text: #fca5a5;
+  --color-chip-error-border: rgba(248, 113, 113, 0.45);
 }
 
 a {
@@ -22,7 +105,9 @@ a:hover {
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+  background: linear-gradient(180deg, var(--color-body-gradient-start) 0%, var(--color-body-gradient-end) 100%);
+  color: var(--color-text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 button {
@@ -35,4 +120,5 @@ button,
 select {
   font-family: inherit;
   font-size: 1rem;
+  color: inherit;
 }
