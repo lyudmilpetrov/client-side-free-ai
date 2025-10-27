@@ -157,7 +157,13 @@ async function downloadWithResume(request, canonical, existingBuffer, existingTo
     let chunk = new Uint8Array(arrayBuffer);
     if (response.status === 200) {
       if (start > 0) {
-        collected = chunk;
+        const fullRequest = new Request(request.url, Object.assign({}, requestInit, { headers }));
+        const fullResponse = await fetch(fullRequest);
+        if (!fullResponse.ok) {
+          throw new Error(`Unexpected status ${fullResponse.status} for ${canonical}`);
+        }
+        const fullBuffer = await fullResponse.arrayBuffer();
+        collected = new Uint8Array(fullBuffer);
       } else {
         const merged = new Uint8Array(collected.byteLength + chunk.byteLength);
         merged.set(collected);
