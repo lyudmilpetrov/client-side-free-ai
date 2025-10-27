@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
 ];
 const MODEL_URL_PATTERNS = [
   "https://huggingface.co/",
+  "https://cdn-lfs.huggingface.co/",
   "https://raw.githubusercontent.com/mlc-ai/",
   "https://cdn.jsdelivr.net/",
   "https://models.xenova.ai/",
@@ -256,13 +257,18 @@ async function prefetchModelAssets(payload) {
     payload.urls.forEach((url) => urls.add(stripQuery(url)));
   }
   if (payload.baseUrl) {
-    const base = payload.baseUrl;
-    urls.add(new URL("mlc-chat-config.json", base).href);
-    urls.add(new URL("tokenizer.json", base).href);
-    urls.add(new URL("tokenizer.model", base).href);
-    urls.add(new URL("tokenizer_config.json", base).href);
-    urls.add(new URL("ndarray-cache.json", base).href);
+    const base = normalizeModelBaseUrl(payload.baseUrl);
+    if (base) {
+      urls.add(new URL("mlc-chat-config.json", base).href);
+      urls.add(new URL("tokenizer.json", base).href);
+      urls.add(new URL("tokenizer.model", base).href);
+      urls.add(new URL("tokenizer_config.json", base).href);
+      urls.add(new URL("ndarray-cache.json", base).href);
+    }
     try {
+      if (!base) {
+        throw new Error("Invalid base URL");
+      }
       const configResponse = await fetch(new Request(new URL("ndarray-cache.json", base).href, { cache: "no-store" }));
       if (configResponse.ok) {
         const json = await configResponse.clone().json();
@@ -289,6 +295,22 @@ async function prefetchModelAssets(payload) {
       console.error("[sw] Prefetch error for", url, error);
     }
   }));
+}
+
+function normalizeModelBaseUrl(baseUrl) {
+  try {
+    const parsed = new URL(baseUrl, self.location.href);
+    if (!parsed.pathname.endsWith("/")) {
+      parsed.pathname += "/";
+    }
+    if (parsed.hostname === "huggingface.co" && !/\/resolve\/[^/]+\/$/.test(parsed.pathname)) {
+      parsed.pathname += "resolve/main/";
+    }
+    return parsed.href;
+  } catch (error) {
+    console.warn("[sw] Unable to normalize model base URL", baseUrl, error);
+    return null;
+  }
 }
 
 async function ensureDB() {
