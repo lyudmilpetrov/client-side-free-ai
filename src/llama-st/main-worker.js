@@ -1,6 +1,7 @@
 import { action } from "./actions.js";
 import { loadBinaryResource } from "./utility.js";
 import Module from "./main.js";
+import wasmUrl from "./main.wasm?url";
 
 // WASM Module
 let module;
@@ -51,9 +52,10 @@ const initWorker = async (modelPath) => {
         noInitialRun: true,
         locateFile: (path) => {
             if (path.endsWith('.wasm')) {
-                return new URL(`./${path}`, import.meta.url).href;
+                return wasmUrl;
             }
-            return path;
+
+            return new URL(path, import.meta.url).href;
         },
         preInit: [() => {
             emscrModule.TTY.register(emscrModule.FS.makedev(5, 0), {
