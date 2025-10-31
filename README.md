@@ -89,5 +89,14 @@ path. Follow the steps below to publish the built site to GitHub Pages.
 
 ### 3. Publish the `dist/` folder to a `gh-pages` branch
 
+git subtree push --prefix=dist origin gh-pages 
+
 git push origin $(git subtree split --prefix=dist main):gh-pages --force
+
+
+git subtree split --prefix dist main -b dist-temp
+
+- This creates a temporary branch dist-temp with just the dist folder from main.
+- Then merges it into gh-pages.
+
 
