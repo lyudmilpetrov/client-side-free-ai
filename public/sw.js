@@ -14,6 +14,8 @@ const MODEL_URL_PATTERNS = [
   "https://models.xenova.ai/",
 ];
 const OPTIONAL_MODEL_ASSETS = ["tokenizer.model"];
+const NORMALIZED_OPTIONAL_MODEL_ASSETS = OPTIONAL_MODEL_ASSETS.map((asset) => asset.toLowerCase());
+const MODEL_FILE_EXTENSIONS = [".gguf", ".bin", ".json"];
 const CHUNK_SIZE = 1 << 20; // 1 MiB
 const MIME_GUESS_MAP = [
   { test: /\.wasm$/i, type: "application/wasm" },
@@ -97,8 +99,15 @@ async function cacheFirst(request) {
 }
 
 function shouldHandleModel(url) {
-  if (url.origin === self.location.origin && url.pathname.startsWith("/assets/")) {
-    return true;
+  if (url.origin === self.location.origin) {
+    if (!url.pathname.startsWith("/assets/")) {
+      return false;
+    }
+    const lowerPath = url.pathname.toLowerCase();
+    if (MODEL_FILE_EXTENSIONS.some((ext) => lowerPath.endsWith(ext))) {
+      return true;
+    }
+    return NORMALIZED_OPTIONAL_MODEL_ASSETS.some((asset) => lowerPath.endsWith(`/${asset}`) || lowerPath.endsWith(asset));
   }
   return MODEL_URL_PATTERNS.some((pattern) => url.href.startsWith(pattern));
 }
