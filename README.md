@@ -66,3 +66,9 @@ curl -L https://huggingface.co/Qwen/Qwen3-0.6B-Base/resolve/main/vocab.json -o p
 3. Push `gh-pages` and enable Pages in the repository settings.
 
 The Vite config sets `base: "/client-side-free-ai/"` so asset URLs resolve correctly.
+
+# 1. Navigate to your repo root
+cd /path/to/your/repo
+
+# 2. Use subtree push (recommended for simplicity)
+git subtree push --prefix=subfolder-name origin gh-pages
