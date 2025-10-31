@@ -2,6 +2,13 @@ import { action } from "./actions.js";
 import { loadBinaryResource } from "./utility.js";
 import Module from "./main.js";
 import wasmUrl from "./main.wasm?url";
+import wasmBinary from "./main.wasm?arraybuffer";
+
+const WORKER_LOG_PREFIX = "[llama-worker]";
+const log = (...args) => console.info(WORKER_LOG_PREFIX, ...args);
+const debug = (...args) => console.debug(WORKER_LOG_PREFIX, ...args);
+const warn = (...args) => console.warn(WORKER_LOG_PREFIX, ...args);
+const error = (...args) => console.error(WORKER_LOG_PREFIX, ...args);
 
 // WASM Module
 let module;
@@ -12,6 +19,7 @@ const model_path = "/models/model.bin";
 
 // Function to send model line result
 const print = (text) => {
+    debug("Streaming token chunk", { text });
     postMessage({
         event: action.WRITE_RESULT,
         text: text,
@@ -43,7 +51,9 @@ const stdout = (c) => {
 const stderr = () => {};
 
 const initWorker = async (modelPath) => {
+    log("initWorker invoked", { modelPath, hasModule: !!module, modelLoaded });
     if (module && modelLoaded) {
+        log("Module already initialised, notifying main thread");
         postMessage({ event: action.INITIALIZED });
         return;
     }
@@ -52,12 +62,17 @@ const initWorker = async (modelPath) => {
         noInitialRun: true,
         locateFile: (path) => {
             if (path.endsWith('.wasm')) {
-                return wasmUrl;
+                const resolvedPath = wasmUrl;
+                debug("Resolving wasm asset", { requested: path, resolvedPath });
+                return resolvedPath;
             }
 
-            return new URL(path, import.meta.url).href;
+            const resolved = new URL(path, import.meta.url).href;
+            debug("Resolving auxiliary asset", { requested: path, resolved });
+            return resolved;
         },
         preInit: [() => {
+            debug("Registering stdout/stderr handlers with Emscripten TTY");
             emscrModule.TTY.register(emscrModule.FS.makedev(5, 0), {
                 get_char: tty => stdin(tty),
                 put_char: (tty, val) => { tty.output.push(val); stdout(val); },
@@ -74,9 +89,24 @@ const initWorker = async (modelPath) => {
         }],
     };
 
-    module = await Module(emscrModule);
+    if (wasmBinary && wasmBinary.byteLength) {
+        log("Using embedded wasm binary buffer", { byteLength: wasmBinary.byteLength });
+        emscrModule.wasmBinary = wasmBinary;
+    } else {
+        warn("Embedded wasm binary unavailable; falling back to fetch via locateFile");
+    }
+
+    try {
+        log("Instantiating Emscripten module");
+        module = await Module(emscrModule);
+        log("Emscripten module instantiated successfully");
+    } catch (err) {
+        error("Failed to instantiate wasm module", err);
+        throw err;
+    }
 
     const initCallback = (bytes) => {
+        log("Model bytes ready, mounting virtual filesystem", { byteLength: bytes?.length ?? 0 });
         // create vfs folder for storing model bins
         module['FS_createPath']("/", "models", true, true);
 
@@ -84,6 +114,7 @@ const initWorker = async (modelPath) => {
         module['FS_createDataFile']('/models', 'model.bin', bytes, true, true, true);
 
         modelLoaded = true;
+        log("Model copied to virtual filesystem");
 
         // update callback action to worker main thread
         postMessage({
@@ -91,6 +122,7 @@ const initWorker = async (modelPath) => {
         });
     }
 
+    log("Requesting model bytes", { modelPath });
     loadBinaryResource(modelPath, initCallback);
 }
 
@@ -106,6 +138,7 @@ const run_main = (
     top_p,
     no_display_prompt
 ) => {
+    log("Starting llama.cpp main", { promptLength: prompt?.length ?? 0, chatml, n_predict, ctx_size, batch_size, temp, n_gpu_layers, top_k, top_p, no_display_prompt });
     const args = [
         "--model", model_path,
         "--n-predict", n_predict.toString(),
@@ -134,20 +167,24 @@ const run_main = (
 
     module['callMain'](args);
 
+    log("llama.cpp main completed");
     postMessage({
         event: action.RUN_COMPLETED
     });
-} 
+}
 
 // Worker Events
 self.addEventListener('message', (e) => {
+    debug("Worker received message", e.data);
     switch (e.data.event) {
         case action.LOAD:
             // load event
+            log("LOAD action received", { url: e.data.url });
             initWorker(e.data.url);
             break;
         case action.RUN_MAIN:
             // run main
+            log("RUN_MAIN action received");
             run_main(
                 e.data.prompt,
                 e.data.chatml,
@@ -162,5 +199,7 @@ self.addEventListener('message', (e) => {
             );
 
             break;
+        default:
+            warn("Unknown worker event received", e.data);
     }
 }, false);
