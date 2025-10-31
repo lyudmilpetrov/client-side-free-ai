@@ -71,4 +71,9 @@ The Vite config sets `base: "/client-side-free-ai/"` so asset URLs resolve corre
 cd /path/to/your/repo
 
 # 2. Use subtree push (recommended for simplicity)
-git subtree push --prefix=subfolder-name origin gh-pages
+git subtree push --prefix=dist origin gh-pages
+
+or
+
+git fetch origin gh-pages:backup-gh-pages
+
