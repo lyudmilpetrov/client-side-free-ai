@@ -89,38 +89,5 @@ path. Follow the steps below to publish the built site to GitHub Pages.
 
 ### 3. Publish the `dist/` folder to a `gh-pages` branch
 
-Run the commands below from the project root to create (or update) the Pages branch
-with the latest build artifacts:
+git push origin $(git subtree split --prefix=dist main):gh-pages --force
 
-```bash
-git subtree split --prefix dist -b gh-pages-deploy
-git push origin gh-pages-deploy:gh-pages --force
-git branch -D gh-pages-deploy
-```
-
-Alternatively, manage the branch with a worktree so you can copy files directly:
-
-```bash
-git worktree add ../client-side-free-ai-gh-pages gh-pages
-rsync -av --delete dist/ ../client-side-free-ai-gh-pages/
-cd ../client-side-free-ai-gh-pages
-git add .
-git commit -m "Deploy latest build"
-git push origin gh-pages
-cd -
-git worktree remove ../client-side-free-ai-gh-pages
-```
-
-> The `rsync` command keeps the branch in sync with the contents of `dist/`. You can
-> replace it with manual file copies if you prefer.
-
-### 4. Enable GitHub Pages
-
-1. Open the repository on GitHub and navigate to **Settings → Pages**.
-2. Under **Source**, choose **Deploy from a branch**.
-3. Select the `gh-pages` branch and the `/ (root)` folder, then click **Save**.
-4. Wait for GitHub to deploy the site. The published URL will be displayed on the
-   Pages settings screen once the deployment completes.
-
-After the first deployment, repeat steps 2 and 3 whenever you want to publish a new
-build.
