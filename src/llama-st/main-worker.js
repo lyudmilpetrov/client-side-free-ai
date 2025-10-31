@@ -49,6 +49,12 @@ const initWorker = async (modelPath) => {
 
     const emscrModule = {
         noInitialRun: true,
+        locateFile: (path) => {
+            if (path.endsWith('.wasm')) {
+                return new URL(`./${path}`, import.meta.url).href;
+            }
+            return path;
+        },
         preInit: [() => {
             emscrModule.TTY.register(emscrModule.FS.makedev(5, 0), {
                 get_char: tty => stdin(tty),
